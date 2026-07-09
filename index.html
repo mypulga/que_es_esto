@@ -1,0 +1,653 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>💕 Sorpresa para George 💕</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            width: 100%;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: linear-gradient(135deg, #2d0a1a 0%, #5a1a3a 50%, #3d1a2d 100%);
+            font-family: 'Arial', sans-serif;
+            overflow: hidden;
+        }
+
+        /* FASE 1: SOBRE */
+        .envelope-container {
+            position: relative;
+            width: 300px;
+            height: 200px;
+            perspective: 1000px;
+            cursor: pointer;
+            z-index: 100;
+        }
+
+        .envelope {
+            width: 100%;
+            height: 100%;
+            position: relative;
+            transform-style: preserve-3d;
+            transition: transform 0.6s ease-out;
+        }
+
+        .envelope.open {
+            transform: rotateX(90deg);
+        }
+
+        .envelope-back {
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #dc143c 0%, #8b0000 100%);
+            position: absolute;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border-radius: 10px;
+            box-shadow: 0 10px 40px rgba(139, 0, 0, 0.5);
+            font-size: 80px;
+            backface-visibility: hidden;
+        }
+
+        .envelope-front {
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #ff69b4 0%, #ffc0cb 50%, #ff1493 100%);
+            position: absolute;
+            border-radius: 10px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 10px 40px rgba(220, 20, 60, 0.5);
+            backface-visibility: hidden;
+            transform: rotateX(0deg);
+        }
+
+        .envelope-text {
+            color: white;
+            font-size: 24px;
+            font-weight: bold;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+            text-align: center;
+        }
+
+        .click-hint {
+            font-size: 12px;
+            margin-top: 20px;
+            opacity: 0.7;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 0.7; }
+            50% { opacity: 1; }
+        }
+
+        /* FASE 2: NOTA */
+        .note-container {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(0);
+            background: linear-gradient(135deg, #fff5f7 0%, #ffe0eb 100%);
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 20px 60px rgba(139, 0, 0, 0.4);
+            z-index: 200;
+            max-width: 400px;
+            text-align: center;
+            border: 3px solid #dc143c;
+        }
+
+        .note-container.show {
+            animation: noteAppear 0.8s ease-out forwards;
+        }
+
+        @keyframes noteAppear {
+            from {
+                transform: translate(-50%, -50%) scale(0) rotateZ(-10deg);
+                opacity: 0;
+            }
+            to {
+                transform: translate(-50%, -50%) scale(1) rotateZ(0deg);
+                opacity: 1;
+            }
+        }
+
+        .note-content {
+            color: #8b0000;
+            font-size: 18px;
+            font-weight: bold;
+            line-height: 1.6;
+            margin-bottom: 20px;
+        }
+
+        .note-close {
+            background: linear-gradient(135deg, #dc143c, #8b0000);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: transform 0.3s;
+        }
+
+        .note-close:hover {
+            transform: scale(1.1);
+        }
+
+        /* FASE 3: PASSWORD */
+        .password-container {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(0);
+            background: linear-gradient(135deg, #2d0a1a 0%, #5a1a3a 100%);
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.8);
+            z-index: 200;
+            max-width: 350px;
+            text-align: center;
+            border: 3px solid #dc143c;
+        }
+
+        .password-container.show {
+            animation: noteAppear 0.8s ease-out forwards;
+        }
+
+        .password-text {
+            color: #ffc0cb;
+            font-size: 16px;
+            margin-bottom: 20px;
+            font-weight: bold;
+        }
+
+        .password-input {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 15px;
+            border: 2px solid #dc143c;
+            border-radius: 5px;
+            background: #fff5f7;
+            color: #8b0000;
+            font-size: 14px;
+            font-weight: bold;
+            text-align: center;
+        }
+
+        .password-input::placeholder {
+            color: #daa0b3;
+        }
+
+        .password-button {
+            background: linear-gradient(135deg, #dc143c, #8b0000);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: transform 0.3s;
+        }
+
+        .password-button:hover {
+            transform: scale(1.1);
+        }
+
+        .error-message {
+            color: #ff1493;
+            font-size: 12px;
+            margin-top: 10px;
+            display: none;
+        }
+
+        .error-message.show {
+            display: block;
+            animation: shake 0.5s;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-10px); }
+            75% { transform: translateX(10px); }
+        }
+
+        /* FASE 4: FUEGOS ARTIFICIALES */
+        .fireworks-container {
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            z-index: 150;
+            pointer-events: none;
+        }
+
+        .firework {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            pointer-events: none;
+        }
+
+        .particle {
+            position: absolute;
+            pointer-events: none;
+        }
+
+        /* FASE 5: LLUVIA DE CORAZONES Y LETRAS */
+        .rain-container {
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            z-index: 140;
+            pointer-events: none;
+        }
+
+        .rain-item {
+            position: absolute;
+            font-weight: bold;
+            font-size: 20px;
+            opacity: 0.9;
+        }
+
+        /* FASE 6: CORAZON INTERACTIVO */
+        .heart-container {
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            z-index: 130;
+            pointer-events: none;
+        }
+
+        .heart-main {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 100px;
+            cursor: pointer;
+            pointer-events: auto;
+            z-index: 131;
+        }
+
+        .heart-particle {
+            position: absolute;
+            font-size: 20px;
+            pointer-events: none;
+        }
+
+        /* FASE 7: GALAXIA */
+        .galaxy-canvas {
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            z-index: 120;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .message-final {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: #ffc0cb;
+            font-size: 32px;
+            font-weight: bold;
+            text-align: center;
+            z-index: 125;
+            text-shadow: 0 0 20px rgba(220, 20, 60, 0.8);
+            pointer-events: none;
+        }
+    </style>
+</head>
+<body>
+    <!-- FASE 1: SOBRE -->
+    <div class="envelope-container" id="envelopeContainer">
+        <div class="envelope" id="envelope">
+            <div class="envelope-back">📮</div>
+            <div class="envelope-front">
+                <div class="envelope-text">Para: George 💌</div>
+                <div class="click-hint">Presiona rápido ⚡</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- FASE 2: NOTA -->
+    <div class="note-container" id="noteContainer">
+        <div class="note-content">
+            Las mejores personas merecen ser amadas.<br><br>
+            <strong>Te amo</strong> 💕
+        </div>
+        <button class="note-close" id="noteClose">Continuar</button>
+    </div>
+
+    <!-- FASE 3: PASSWORD -->
+    <div class="password-container" id="passwordContainer">
+        <div class="password-text">⚠️ Error de Seguridad</div>
+        <div class="password-text" style="font-size: 14px;">Ingresa tu contraseña para continuar</div>
+        <input type="password" class="password-input" id="passwordInput" placeholder="Ingresa tu nombre...">
+        <button class="password-button" id="passwordButton">Verificar</button>
+        <div class="error-message" id="errorMessage">Contraseña incorrecta ❌</div>
+    </div>
+
+    <!-- FASE 4: FUEGOS ARTIFICIALES -->
+    <div class="fireworks-container" id="fireworksContainer"></div>
+
+    <!-- FASE 5: LLUVIA -->
+    <div class="rain-container" id="rainContainer"></div>
+
+    <!-- FASE 6: CORAZON INTERACTIVO -->
+    <div class="heart-container" id="heartContainer">
+        <div class="heart-main" id="heartMain">💖</div>
+    </div>
+
+    <!-- FASE 7: GALAXIA -->
+    <canvas class="galaxy-canvas" id="galaxyCanvas"></canvas>
+    <div class="message-final" id="messageFinal" style="display: none;">
+        Te amo, George 💫✨
+    </div>
+
+    <script>
+        // ===== FASE 1: SOBRE =====
+        const envelopeContainer = document.getElementById('envelopeContainer');
+        const envelope = document.getElementById('envelope');
+        const noteContainer = document.getElementById('noteContainer');
+
+        envelopeContainer.addEventListener('click', () => {
+            envelope.classList.add('open');
+            setTimeout(() => {
+                noteContainer.classList.add('show');
+                envelopeContainer.style.display = 'none';
+            }, 600);
+        });
+
+        // ===== FASE 2: NOTA =====
+        const noteClose = document.getElementById('noteClose');
+        const passwordContainer = document.getElementById('passwordContainer');
+
+        noteClose.addEventListener('click', () => {
+            noteContainer.classList.remove('show');
+            noteContainer.style.display = 'none';
+            setTimeout(() => {
+                passwordContainer.classList.add('show');
+            }, 300);
+        });
+
+        // ===== FASE 3: PASSWORD =====
+        const passwordInput = document.getElementById('passwordInput');
+        const passwordButton = document.getElementById('passwordButton');
+        const errorMessage = document.getElementById('errorMessage');
+
+        passwordButton.addEventListener('click', checkPassword);
+        passwordInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') checkPassword();
+        });
+
+        function checkPassword() {
+            const value = passwordInput.value.toLowerCase();
+            if (value === 'george') {
+                passwordContainer.style.display = 'none';
+                startFireworks();
+            } else {
+                errorMessage.classList.add('show');
+                passwordInput.value = '';
+                setTimeout(() => {
+                    errorMessage.classList.remove('show');
+                }, 1000);
+            }
+        }
+
+        // ===== FASE 4: FUEGOS ARTIFICIALES =====
+        function startFireworks() {
+            const container = document.getElementById('fireworksContainer');
+            
+            for (let i = 0; i < 30; i++) {
+                setTimeout(() => {
+                    createFirework();
+                }, i * 100);
+            }
+
+            function createFirework() {
+                const x = Math.random() * window.innerWidth;
+                const y = Math.random() * window.innerHeight * 0.5;
+
+                for (let i = 0; i < 50; i++) {
+                    const particle = document.createElement('div');
+                    particle.className = 'particle';
+                    particle.innerHTML = Math.random() > 0.7 ? '❤️' : '✨';
+                    particle.style.left = x + 'px';
+                    particle.style.top = y + 'px';
+                    particle.style.fontSize = Math.random() > 0.5 ? '20px' : '30px';
+                    container.appendChild(particle);
+
+                    const angle = (i / 50) * Math.PI * 2;
+                    const velocity = 5 + Math.random() * 8;
+                    const vx = Math.cos(angle) * velocity;
+                    const vy = Math.sin(angle) * velocity;
+                    let px = x, py = y;
+
+                    const anim = setInterval(() => {
+                        px += vx;
+                        py += vy;
+                        particle.style.left = px + 'px';
+                        particle.style.top = py + 'px';
+                        particle.style.opacity = parseFloat(particle.style.opacity || 1) - 0.02;
+
+                        if (parseFloat(particle.style.opacity) <= 0) {
+                            clearInterval(anim);
+                            particle.remove();
+                        }
+                    }, 30);
+                }
+            }
+
+            setTimeout(startRain, 3000);
+        }
+
+        // ===== FASE 5: LLUVIA DE CORAZONES Y LETRAS =====
+        function startRain() {
+            const rainContainer = document.getElementById('rainContainer');
+            const messages = ['💖', '💕', 'T', 'e', 'A', 'm', 'o'];
+
+            for (let i = 0; i < 40; i++) {
+                setTimeout(() => {
+                    const item = document.createElement('div');
+                    item.className = 'rain-item';
+                    item.innerHTML = messages[Math.floor(Math.random() * messages.length)];
+                    item.style.left = Math.random() * window.innerWidth + 'px';
+                    item.style.top = '-50px';
+                    item.style.color = Math.random() > 0.5 ? '#dc143c' : '#ffc0cb';
+                    rainContainer.appendChild(item);
+
+                    let y = -50;
+                    const speed = 2 + Math.random() * 2;
+                    const anim = setInterval(() => {
+                        y += speed;
+                        item.style.top = y + 'px';
+
+                        if (y > window.innerHeight) {
+                            clearInterval(anim);
+                            item.remove();
+                        }
+                    }, 30);
+                }, i * 100);
+            }
+
+            setTimeout(showHeartInteractive, 4000);
+        }
+
+        // ===== FASE 6: CORAZON INTERACTIVO =====
+        function showHeartInteractive() {
+            const heartMain = document.getElementById('heartMain');
+            heartMain.style.opacity = '0';
+            heartMain.style.animation = 'none';
+            void heartMain.offsetWidth;
+            heartMain.style.animation = 'heartPulse 0.6s ease-out';
+            heartMain.style.opacity = '1';
+
+            const style = document.createElement('style');
+            style.innerHTML = `
+                @keyframes heartPulse {
+                    0% { transform: translate(-50%, -50%) scale(0); }
+                    100% { transform: translate(-50%, -50%) scale(1); }
+                }
+            `;
+            document.head.appendChild(style);
+
+            heartMain.addEventListener('click', convertToGalaxy);
+        }
+
+        function convertToGalaxy() {
+            const heartMain = document.getElementById('heartMain');
+            const heartContainer = document.getElementById('heartContainer');
+            const canvas = document.getElementById('galaxyCanvas');
+            const messageFinal = document.getElementById('messageFinal');
+
+            // Crear partículas del corazón
+            const centerX = window.innerWidth / 2;
+            const centerY = window.innerHeight / 2;
+
+            for (let i = 0; i < 100; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'heart-particle';
+                particle.innerHTML = '💖';
+                particle.style.left = centerX + 'px';
+                particle.style.top = centerY + 'px';
+                particle.style.fontSize = (10 + Math.random() * 20) + 'px';
+                heartContainer.appendChild(particle);
+
+                const angle = Math.random() * Math.PI * 2;
+                const distance = 150 + Math.random() * 300;
+                const finalX = centerX + Math.cos(angle) * distance;
+                const finalY = centerY + Math.sin(angle) * distance;
+
+                const duration = 1000 + Math.random() * 500;
+                const startTime = Date.now();
+
+                const animParticle = setInterval(() => {
+                    const elapsed = Date.now() - startTime;
+                    const progress = Math.min(elapsed / duration, 1);
+
+                    const currentX = centerX + (finalX - centerX) * progress;
+                    const currentY = centerY + (finalY - centerY) * progress;
+
+                    particle.style.left = currentX + 'px';
+                    particle.style.top = currentY + 'px';
+                    particle.style.opacity = 1 - progress;
+
+                    if (progress >= 1) {
+                        clearInterval(animParticle);
+                        particle.remove();
+                    }
+                }, 30);
+            }
+
+            heartMain.style.opacity = '0';
+
+            setTimeout(() => {
+                heartContainer.style.display = 'none';
+                messageFinal.style.display = 'block';
+                messageFinal.style.animation = 'fadeInScale 0.8s ease-out';
+                startGalaxy();
+            }, 1500);
+        }
+
+        // ===== FASE 7: GALAXIA =====
+        function startGalaxy() {
+            const canvas = document.getElementById('galaxyCanvas');
+            const ctx = canvas.getContext('2d');
+
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+
+            const particles = [];
+            const particleCount = 150;
+
+            class GalaxyParticle {
+                constructor() {
+                    this.angle = Math.random() * Math.PI * 2;
+                    this.distance = Math.random() * 300;
+                    this.speed = 0.01 + Math.random() * 0.03;
+                    this.size = Math.random() * 3 + 1;
+                    this.opacity = Math.random() * 0.5 + 0.5;
+                    this.hue = Math.random() * 60 + 300; // Rosa a rojo
+                }
+
+                update() {
+                    this.angle += this.speed;
+                    this.distance = Math.max(10, this.distance - 0.5);
+                }
+
+                draw() {
+                    const x = canvas.width / 2 + Math.cos(this.angle) * this.distance;
+                    const y = canvas.height / 2 + Math.sin(this.angle) * this.distance;
+
+                    ctx.fillStyle = `hsla(${this.hue}, 100%, 50%, ${this.opacity})`;
+                    ctx.beginPath();
+                    ctx.arc(x, y, this.size, 0, Math.PI * 2);
+                    ctx.fill();
+
+                    // Glow effect
+                    ctx.fillStyle = `hsla(${this.hue}, 100%, 70%, ${this.opacity * 0.3})`;
+                    ctx.beginPath();
+                    ctx.arc(x, y, this.size * 3, 0, Math.PI * 2);
+                    ctx.fill();
+                }
+            }
+
+            for (let i = 0; i < particleCount; i++) {
+                particles.push(new GalaxyParticle());
+            }
+
+            function animate() {
+                ctx.fillStyle = 'rgba(45, 10, 26, 0.1)';
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+                particles.forEach(particle => {
+                    particle.update();
+                    particle.draw();
+                });
+
+                if (particles[0].distance > 10) {
+                    requestAnimationFrame(animate);
+                }
+            }
+
+            animate();
+        }
+
+        // Agregar estilos dinámicos
+        const style = document.createElement('style');
+        style.innerHTML = `
+            @keyframes fadeInScale {
+                0% { opacity: 0; transform: translate(-50%, -50%) scale(0.5); }
+                100% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+            }
+        `;
+        document.head.appendChild(style);
+    </script>
+</body>
+</html>
