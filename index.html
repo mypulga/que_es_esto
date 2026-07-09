@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>💕 Sorpresa para George 💕</title>
+    <title>💕 Para George 💕</title>
     <style>
         * {
             margin: 0;
@@ -22,55 +22,39 @@
             overflow: hidden;
         }
 
-        /* FASE 1: SOBRE */
-        .envelope-container {
+        .container {
             position: relative;
+            width: 100%;
+            height: 100%;
+        }
+
+        /* SOBRE */
+        .envelope {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
             width: 300px;
             height: 200px;
-            perspective: 1000px;
-            cursor: pointer;
-            z-index: 100;
-        }
-
-        .envelope {
-            width: 100%;
-            height: 100%;
-            position: relative;
-            transform-style: preserve-3d;
-            transition: transform 0.6s ease-out;
-        }
-
-        .envelope.open {
-            transform: rotateX(90deg);
-        }
-
-        .envelope-back {
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(135deg, #dc143c 0%, #8b0000 100%);
-            position: absolute;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            border-radius: 10px;
-            box-shadow: 0 10px 40px rgba(139, 0, 0, 0.5);
-            font-size: 80px;
-            backface-visibility: hidden;
-        }
-
-        .envelope-front {
-            width: 100%;
-            height: 100%;
             background: linear-gradient(135deg, #ff69b4 0%, #ffc0cb 50%, #ff1493 100%);
-            position: absolute;
             border-radius: 10px;
+            cursor: pointer;
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
             box-shadow: 0 10px 40px rgba(220, 20, 60, 0.5);
-            backface-visibility: hidden;
-            transform: rotateX(0deg);
+            transition: all 0.3s;
+            z-index: 100;
+        }
+
+        .envelope:hover {
+            transform: translate(-50%, -50%) scale(1.05);
+        }
+
+        .envelope.hidden {
+            opacity: 0;
+            pointer-events: none;
         }
 
         .envelope-text {
@@ -78,24 +62,23 @@
             font-size: 24px;
             font-weight: bold;
             text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
-            text-align: center;
         }
 
-        .click-hint {
-            font-size: 12px;
-            margin-top: 20px;
-            opacity: 0.7;
+        .envelope-hint {
+            font-size: 14px;
+            margin-top: 15px;
+            opacity: 0.8;
             animation: pulse 2s infinite;
         }
 
         @keyframes pulse {
-            0%, 100% { opacity: 0.7; }
+            0%, 100% { opacity: 0.6; }
             50% { opacity: 1; }
         }
 
-        /* FASE 2: NOTA */
-        .note-container {
-            position: fixed;
+        /* NOTA */
+        .note {
+            position: absolute;
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%) scale(0);
@@ -107,49 +90,40 @@
             max-width: 400px;
             text-align: center;
             border: 3px solid #dc143c;
+            transition: transform 0.6s ease-out;
         }
 
-        .note-container.show {
-            animation: noteAppear 0.8s ease-out forwards;
-        }
-
-        @keyframes noteAppear {
-            from {
-                transform: translate(-50%, -50%) scale(0) rotateZ(-10deg);
-                opacity: 0;
-            }
-            to {
-                transform: translate(-50%, -50%) scale(1) rotateZ(0deg);
-                opacity: 1;
-            }
+        .note.show {
+            transform: translate(-50%, -50%) scale(1);
         }
 
         .note-content {
             color: #8b0000;
             font-size: 18px;
             font-weight: bold;
-            line-height: 1.6;
+            line-height: 1.8;
             margin-bottom: 20px;
         }
 
-        .note-close {
+        .note-button {
             background: linear-gradient(135deg, #dc143c, #8b0000);
             color: white;
             border: none;
-            padding: 10px 20px;
+            padding: 12px 30px;
             border-radius: 5px;
             cursor: pointer;
             font-weight: bold;
+            font-size: 16px;
             transition: transform 0.3s;
         }
 
-        .note-close:hover {
+        .note-button:hover {
             transform: scale(1.1);
         }
 
-        /* FASE 3: PASSWORD */
-        .password-container {
-            position: fixed;
+        /* PASSWORD */
+        .password-box {
+            position: absolute;
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%) scale(0);
@@ -161,16 +135,17 @@
             max-width: 350px;
             text-align: center;
             border: 3px solid #dc143c;
+            transition: transform 0.6s ease-out;
         }
 
-        .password-container.show {
-            animation: noteAppear 0.8s ease-out forwards;
+        .password-box.show {
+            transform: translate(-50%, -50%) scale(1);
         }
 
-        .password-text {
+        .password-label {
             color: #ffc0cb;
             font-size: 16px;
-            margin-bottom: 20px;
+            margin-bottom: 15px;
             font-weight: bold;
         }
 
@@ -200,20 +175,21 @@
             cursor: pointer;
             font-weight: bold;
             transition: transform 0.3s;
+            width: 100%;
         }
 
         .password-button:hover {
-            transform: scale(1.1);
+            transform: scale(1.05);
         }
 
-        .error-message {
+        .error-msg {
             color: #ff1493;
             font-size: 12px;
             margin-top: 10px;
             display: none;
         }
 
-        .error-message.show {
+        .error-msg.show {
             display: block;
             animation: shake 0.5s;
         }
@@ -224,8 +200,8 @@
             75% { transform: translateX(10px); }
         }
 
-        /* FASE 4: FUEGOS ARTIFICIALES */
-        .fireworks-container {
+        /* FUEGOS ARTIFICIALES */
+        .fireworks {
             position: fixed;
             width: 100%;
             height: 100%;
@@ -235,21 +211,13 @@
             pointer-events: none;
         }
 
-        .firework {
-            position: absolute;
-            width: 10px;
-            height: 10px;
-            border-radius: 50%;
-            pointer-events: none;
-        }
-
         .particle {
             position: absolute;
             pointer-events: none;
         }
 
-        /* FASE 5: LLUVIA DE CORAZONES Y LETRAS */
-        .rain-container {
+        /* LLUVIA */
+        .rain {
             position: fixed;
             width: 100%;
             height: 100%;
@@ -262,40 +230,56 @@
         .rain-item {
             position: absolute;
             font-weight: bold;
-            font-size: 20px;
-            opacity: 0.9;
+            font-size: 30px;
         }
 
-        /* FASE 6: CORAZON INTERACTIVO */
-        .heart-container {
-            position: fixed;
-            width: 100%;
-            height: 100%;
-            top: 0;
-            left: 0;
-            z-index: 130;
-            pointer-events: none;
-        }
-
-        .heart-main {
+        /* CORAZON */
+        .heart {
             position: absolute;
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            font-size: 100px;
+            font-size: 80px;
             cursor: pointer;
-            pointer-events: auto;
-            z-index: 131;
+            z-index: 130;
+            transition: transform 0.3s;
+            opacity: 0;
         }
 
-        .heart-particle {
-            position: absolute;
-            font-size: 20px;
+        .heart:hover {
+            transform: translate(-50%, -50%) scale(1.2);
+        }
+
+        .heart.show {
+            opacity: 1;
+        }
+
+        .heart.hidden {
+            opacity: 0;
             pointer-events: none;
         }
 
-        /* FASE 7: GALAXIA */
-        .galaxy-canvas {
+        /* MENSAJE FINAL */
+        .final-message {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(0);
+            color: #ffc0cb;
+            font-size: 36px;
+            font-weight: bold;
+            text-align: center;
+            z-index: 125;
+            text-shadow: 0 0 20px rgba(220, 20, 60, 0.8);
+            transition: transform 0.8s ease-out;
+        }
+
+        .final-message.show {
+            transform: translate(-50%, -50%) scale(1);
+        }
+
+        /* GALAXIA */
+        .galaxy {
             position: fixed;
             width: 100%;
             height: 100%;
@@ -303,105 +287,79 @@
             left: 0;
             z-index: 120;
         }
-
-        .hidden {
-            display: none;
-        }
-
-        .message-final {
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            color: #ffc0cb;
-            font-size: 32px;
-            font-weight: bold;
-            text-align: center;
-            z-index: 125;
-            text-shadow: 0 0 20px rgba(220, 20, 60, 0.8);
-            pointer-events: none;
-        }
     </style>
 </head>
 <body>
-    <!-- FASE 1: SOBRE -->
-    <div class="envelope-container" id="envelopeContainer">
+    <div class="container">
+        <!-- SOBRE -->
         <div class="envelope" id="envelope">
-            <div class="envelope-back">📮</div>
-            <div class="envelope-front">
-                <div class="envelope-text">Para: George 💌</div>
-                <div class="click-hint">Presiona rápido ⚡</div>
+            <div class="envelope-text">Para: George 💌</div>
+            <div class="envelope-hint">Presiona aquí ⚡</div>
+        </div>
+
+        <!-- NOTA -->
+        <div class="note" id="note">
+            <div class="note-content">
+                Las mejores personas<br>merecen ser amadas.<br><br>
+                <strong style="font-size: 20px;">Te amo 💕</strong>
             </div>
+            <button class="note-button" id="noteBtn">Continuar</button>
         </div>
-    </div>
 
-    <!-- FASE 2: NOTA -->
-    <div class="note-container" id="noteContainer">
-        <div class="note-content">
-            Las mejores personas merecen ser amadas.<br><br>
-            <strong>Te amo</strong> 💕
+        <!-- PASSWORD -->
+        <div class="password-box" id="passwordBox">
+            <div class="password-label">⚠️ Acceso de Seguridad</div>
+            <div class="password-label" style="font-size: 14px; margin-bottom: 20px;">Ingresa tu nombre para continuar</div>
+            <input type="text" class="password-input" id="passwordInput" placeholder="¿Cuál es tu nombre?">
+            <button class="password-button" id="passwordBtn">Verificar</button>
+            <div class="error-msg" id="errorMsg">❌ Intenta de nuevo</div>
         </div>
-        <button class="note-close" id="noteClose">Continuar</button>
-    </div>
 
-    <!-- FASE 3: PASSWORD -->
-    <div class="password-container" id="passwordContainer">
-        <div class="password-text">⚠️ Error de Seguridad</div>
-        <div class="password-text" style="font-size: 14px;">Ingresa tu contraseña para continuar</div>
-        <input type="password" class="password-input" id="passwordInput" placeholder="Ingresa tu nombre...">
-        <button class="password-button" id="passwordButton">Verificar</button>
-        <div class="error-message" id="errorMessage">Contraseña incorrecta ❌</div>
-    </div>
+        <!-- FUEGOS -->
+        <div class="fireworks" id="fireworks"></div>
 
-    <!-- FASE 4: FUEGOS ARTIFICIALES -->
-    <div class="fireworks-container" id="fireworksContainer"></div>
+        <!-- LLUVIA -->
+        <div class="rain" id="rain"></div>
 
-    <!-- FASE 5: LLUVIA -->
-    <div class="rain-container" id="rainContainer"></div>
+        <!-- CORAZON -->
+        <div class="heart" id="heart">💖</div>
 
-    <!-- FASE 6: CORAZON INTERACTIVO -->
-    <div class="heart-container" id="heartContainer">
-        <div class="heart-main" id="heartMain">💖</div>
-    </div>
+        <!-- MENSAJE FINAL -->
+        <div class="final-message" id="finalMessage">
+            Te amo, George 💕✨
+        </div>
 
-    <!-- FASE 7: GALAXIA -->
-    <canvas class="galaxy-canvas" id="galaxyCanvas"></canvas>
-    <div class="message-final" id="messageFinal" style="display: none;">
-        Te amo, George 💫✨
+        <!-- GALAXIA -->
+        <canvas class="galaxy" id="galaxyCanvas"></canvas>
     </div>
 
     <script>
-        // ===== FASE 1: SOBRE =====
-        const envelopeContainer = document.getElementById('envelopeContainer');
+        // FASE 1: SOBRE
         const envelope = document.getElementById('envelope');
-        const noteContainer = document.getElementById('noteContainer');
+        const note = document.getElementById('note');
 
-        envelopeContainer.addEventListener('click', () => {
-            envelope.classList.add('open');
-            setTimeout(() => {
-                noteContainer.classList.add('show');
-                envelopeContainer.style.display = 'none';
-            }, 600);
+        envelope.addEventListener('click', () => {
+            envelope.classList.add('hidden');
+            note.classList.add('show');
         });
 
-        // ===== FASE 2: NOTA =====
-        const noteClose = document.getElementById('noteClose');
-        const passwordContainer = document.getElementById('passwordContainer');
+        // FASE 2: NOTA
+        const noteBtn = document.getElementById('noteBtn');
+        const passwordBox = document.getElementById('passwordBox');
 
-        noteClose.addEventListener('click', () => {
-            noteContainer.classList.remove('show');
-            noteContainer.style.display = 'none';
+        noteBtn.addEventListener('click', () => {
+            note.classList.remove('show');
             setTimeout(() => {
-                passwordContainer.classList.add('show');
+                passwordBox.classList.add('show');
             }, 300);
         });
 
-        // ===== FASE 3: PASSWORD =====
+        // FASE 3: PASSWORD
         const passwordInput = document.getElementById('passwordInput');
-        const passwordButton = document.getElementById('passwordButton');
-        const errorMessage = document.getElementById('errorMessage');
+        const passwordBtn = document.getElementById('passwordBtn');
+        const errorMsg = document.getElementById('errorMsg');
 
-        passwordButton.addEventListener('click', checkPassword);
+        passwordBtn.addEventListener('click', checkPassword);
         passwordInput.addEventListener('keypress', (e) => {
             if (e.key === 'Enter') checkPassword();
         });
@@ -409,54 +367,58 @@
         function checkPassword() {
             const value = passwordInput.value.toLowerCase();
             if (value === 'george') {
-                passwordContainer.style.display = 'none';
+                passwordBox.classList.remove('show');
                 startFireworks();
             } else {
-                errorMessage.classList.add('show');
+                errorMsg.classList.add('show');
                 passwordInput.value = '';
                 setTimeout(() => {
-                    errorMessage.classList.remove('show');
+                    errorMsg.classList.remove('show');
                 }, 1000);
             }
         }
 
-        // ===== FASE 4: FUEGOS ARTIFICIALES =====
+        // FASE 4: FUEGOS ARTIFICIALES
         function startFireworks() {
-            const container = document.getElementById('fireworksContainer');
+            const fireworksContainer = document.getElementById('fireworks');
             
-            for (let i = 0; i < 30; i++) {
+            for (let i = 0; i < 25; i++) {
                 setTimeout(() => {
                     createFirework();
-                }, i * 100);
+                }, i * 150);
             }
 
             function createFirework() {
                 const x = Math.random() * window.innerWidth;
-                const y = Math.random() * window.innerHeight * 0.5;
+                const y = Math.random() * window.innerHeight * 0.6;
 
-                for (let i = 0; i < 50; i++) {
+                for (let i = 0; i < 40; i++) {
                     const particle = document.createElement('div');
                     particle.className = 'particle';
-                    particle.innerHTML = Math.random() > 0.7 ? '❤️' : '✨';
+                    particle.innerHTML = Math.random() > 0.6 ? '❤️' : '✨';
                     particle.style.left = x + 'px';
                     particle.style.top = y + 'px';
-                    particle.style.fontSize = Math.random() > 0.5 ? '20px' : '30px';
-                    container.appendChild(particle);
+                    particle.style.fontSize = (15 + Math.random() * 20) + 'px';
+                    fireworksContainer.appendChild(particle);
 
-                    const angle = (i / 50) * Math.PI * 2;
-                    const velocity = 5 + Math.random() * 8;
+                    const angle = (i / 40) * Math.PI * 2;
+                    const velocity = 4 + Math.random() * 6;
                     const vx = Math.cos(angle) * velocity;
                     const vy = Math.sin(angle) * velocity;
                     let px = x, py = y;
+                    let opacity = 1;
 
                     const anim = setInterval(() => {
                         px += vx;
                         py += vy;
+                        vy += 0.1;
+                        opacity -= 0.03;
+
                         particle.style.left = px + 'px';
                         particle.style.top = py + 'px';
-                        particle.style.opacity = parseFloat(particle.style.opacity || 1) - 0.02;
+                        particle.style.opacity = opacity;
 
-                        if (parseFloat(particle.style.opacity) <= 0) {
+                        if (opacity <= 0) {
                             clearInterval(anim);
                             particle.remove();
                         }
@@ -464,26 +426,26 @@
                 }
             }
 
-            setTimeout(startRain, 3000);
+            setTimeout(startRain, 3500);
         }
 
-        // ===== FASE 5: LLUVIA DE CORAZONES Y LETRAS =====
+        // FASE 5: LLUVIA
         function startRain() {
-            const rainContainer = document.getElementById('rainContainer');
-            const messages = ['💖', '💕', 'T', 'e', 'A', 'm', 'o'];
+            const rainContainer = document.getElementById('rain');
+            const items = ['💖', '💕', 'T', 'e', 'A', 'm', 'o'];
 
-            for (let i = 0; i < 40; i++) {
+            for (let i = 0; i < 50; i++) {
                 setTimeout(() => {
                     const item = document.createElement('div');
                     item.className = 'rain-item';
-                    item.innerHTML = messages[Math.floor(Math.random() * messages.length)];
+                    item.innerHTML = items[Math.floor(Math.random() * items.length)];
                     item.style.left = Math.random() * window.innerWidth + 'px';
                     item.style.top = '-50px';
                     item.style.color = Math.random() > 0.5 ? '#dc143c' : '#ffc0cb';
                     rainContainer.appendChild(item);
 
                     let y = -50;
-                    const speed = 2 + Math.random() * 2;
+                    const speed = 2 + Math.random() * 2.5;
                     const anim = setInterval(() => {
                         y += speed;
                         item.style.top = y + 'px';
@@ -493,89 +455,71 @@
                             item.remove();
                         }
                     }, 30);
-                }, i * 100);
+                }, i * 80);
             }
 
-            setTimeout(showHeartInteractive, 4000);
+            setTimeout(showHeart, 4500);
         }
 
-        // ===== FASE 6: CORAZON INTERACTIVO =====
-        function showHeartInteractive() {
-            const heartMain = document.getElementById('heartMain');
-            heartMain.style.opacity = '0';
-            heartMain.style.animation = 'none';
-            void heartMain.offsetWidth;
-            heartMain.style.animation = 'heartPulse 0.6s ease-out';
-            heartMain.style.opacity = '1';
-
-            const style = document.createElement('style');
-            style.innerHTML = `
-                @keyframes heartPulse {
-                    0% { transform: translate(-50%, -50%) scale(0); }
-                    100% { transform: translate(-50%, -50%) scale(1); }
-                }
-            `;
-            document.head.appendChild(style);
-
-            heartMain.addEventListener('click', convertToGalaxy);
+        // FASE 6: CORAZON
+        function showHeart() {
+            const heart = document.getElementById('heart');
+            heart.classList.add('show');
         }
+
+        const heart = document.getElementById('heart');
+        heart.addEventListener('click', convertToGalaxy);
 
         function convertToGalaxy() {
-            const heartMain = document.getElementById('heartMain');
-            const heartContainer = document.getElementById('heartContainer');
-            const canvas = document.getElementById('galaxyCanvas');
-            const messageFinal = document.getElementById('messageFinal');
+            const heart = document.getElementById('heart');
+            const finalMessage = document.getElementById('finalMessage');
+            const fireworks = document.getElementById('fireworks');
 
-            // Crear partículas del corazón
-            const centerX = window.innerWidth / 2;
-            const centerY = window.innerHeight / 2;
-
-            for (let i = 0; i < 100; i++) {
+            heart.classList.add('hidden');
+            
+            // Pequeña explosión de corazones
+            for (let i = 0; i < 50; i++) {
                 const particle = document.createElement('div');
-                particle.className = 'heart-particle';
+                particle.className = 'particle';
                 particle.innerHTML = '💖';
-                particle.style.left = centerX + 'px';
-                particle.style.top = centerY + 'px';
-                particle.style.fontSize = (10 + Math.random() * 20) + 'px';
-                heartContainer.appendChild(particle);
+                particle.style.left = window.innerWidth / 2 + 'px';
+                particle.style.top = window.innerHeight / 2 + 'px';
+                particle.style.fontSize = '20px';
+                fireworks.appendChild(particle);
 
                 const angle = Math.random() * Math.PI * 2;
-                const distance = 150 + Math.random() * 300;
-                const finalX = centerX + Math.cos(angle) * distance;
-                const finalY = centerY + Math.sin(angle) * distance;
+                const distance = 100 + Math.random() * 200;
+                const finalX = window.innerWidth / 2 + Math.cos(angle) * distance;
+                const finalY = window.innerHeight / 2 + Math.sin(angle) * distance;
 
-                const duration = 1000 + Math.random() * 500;
+                const duration = 800;
                 const startTime = Date.now();
 
-                const animParticle = setInterval(() => {
+                const anim = setInterval(() => {
                     const elapsed = Date.now() - startTime;
                     const progress = Math.min(elapsed / duration, 1);
 
-                    const currentX = centerX + (finalX - centerX) * progress;
-                    const currentY = centerY + (finalY - centerY) * progress;
+                    const currentX = window.innerWidth / 2 + (finalX - window.innerWidth / 2) * progress;
+                    const currentY = window.innerHeight / 2 + (finalY - window.innerHeight / 2) * progress;
 
                     particle.style.left = currentX + 'px';
                     particle.style.top = currentY + 'px';
                     particle.style.opacity = 1 - progress;
 
                     if (progress >= 1) {
-                        clearInterval(animParticle);
+                        clearInterval(anim);
                         particle.remove();
                     }
                 }, 30);
             }
 
-            heartMain.style.opacity = '0';
-
             setTimeout(() => {
-                heartContainer.style.display = 'none';
-                messageFinal.style.display = 'block';
-                messageFinal.style.animation = 'fadeInScale 0.8s ease-out';
+                finalMessage.classList.add('show');
                 startGalaxy();
-            }, 1500);
+            }, 1000);
         }
 
-        // ===== FASE 7: GALAXIA =====
+        // FASE 7: GALAXIA
         function startGalaxy() {
             const canvas = document.getElementById('galaxyCanvas');
             const ctx = canvas.getContext('2d');
@@ -584,51 +528,38 @@
             canvas.height = window.innerHeight;
 
             const particles = [];
-            const particleCount = 150;
 
-            class GalaxyParticle {
-                constructor() {
-                    this.angle = Math.random() * Math.PI * 2;
-                    this.distance = Math.random() * 300;
-                    this.speed = 0.01 + Math.random() * 0.03;
-                    this.size = Math.random() * 3 + 1;
-                    this.opacity = Math.random() * 0.5 + 0.5;
-                    this.hue = Math.random() * 60 + 300; // Rosa a rojo
-                }
-
-                update() {
-                    this.angle += this.speed;
-                    this.distance = Math.max(10, this.distance - 0.5);
-                }
-
-                draw() {
-                    const x = canvas.width / 2 + Math.cos(this.angle) * this.distance;
-                    const y = canvas.height / 2 + Math.sin(this.angle) * this.distance;
-
-                    ctx.fillStyle = `hsla(${this.hue}, 100%, 50%, ${this.opacity})`;
-                    ctx.beginPath();
-                    ctx.arc(x, y, this.size, 0, Math.PI * 2);
-                    ctx.fill();
-
-                    // Glow effect
-                    ctx.fillStyle = `hsla(${this.hue}, 100%, 70%, ${this.opacity * 0.3})`;
-                    ctx.beginPath();
-                    ctx.arc(x, y, this.size * 3, 0, Math.PI * 2);
-                    ctx.fill();
-                }
-            }
-
-            for (let i = 0; i < particleCount; i++) {
-                particles.push(new GalaxyParticle());
+            for (let i = 0; i < 150; i++) {
+                particles.push({
+                    angle: Math.random() * Math.PI * 2,
+                    distance: Math.random() * 300,
+                    speed: 0.01 + Math.random() * 0.03,
+                    size: Math.random() * 3 + 1,
+                    opacity: Math.random() * 0.5 + 0.5,
+                    hue: Math.random() * 60 + 300
+                });
             }
 
             function animate() {
                 ctx.fillStyle = 'rgba(45, 10, 26, 0.1)';
                 ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-                particles.forEach(particle => {
-                    particle.update();
-                    particle.draw();
+                particles.forEach(p => {
+                    p.angle += p.speed;
+                    p.distance = Math.max(10, p.distance - 0.5);
+
+                    const x = canvas.width / 2 + Math.cos(p.angle) * p.distance;
+                    const y = canvas.height / 2 + Math.sin(p.angle) * p.distance;
+
+                    ctx.fillStyle = `hsla(${p.hue}, 100%, 50%, ${p.opacity})`;
+                    ctx.beginPath();
+                    ctx.arc(x, y, p.size, 0, Math.PI * 2);
+                    ctx.fill();
+
+                    ctx.fillStyle = `hsla(${p.hue}, 100%, 70%, ${p.opacity * 0.3})`;
+                    ctx.beginPath();
+                    ctx.arc(x, y, p.size * 3, 0, Math.PI * 2);
+                    ctx.fill();
                 });
 
                 if (particles[0].distance > 10) {
@@ -638,16 +569,6 @@
 
             animate();
         }
-
-        // Agregar estilos dinámicos
-        const style = document.createElement('style');
-        style.innerHTML = `
-            @keyframes fadeInScale {
-                0% { opacity: 0; transform: translate(-50%, -50%) scale(0.5); }
-                100% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
-            }
-        `;
-        document.head.appendChild(style);
     </script>
 </body>
 </html>
